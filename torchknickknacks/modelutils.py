@@ -78,7 +78,7 @@ def delete_layers(model, del_ids = []):
     
     Input
     -----
-    model: instance of class of the base class torch.nn.Module
+    model: instance of class of base class torch.nn.Module
     
     del_ids: list, default [], of int or str specifying the modules/layers
         that will be deleted
@@ -111,7 +111,26 @@ def delete_layers(model, del_ids = []):
 
     return model
 
+def add_layers(model, modules = []):
+    all_positions = [m['position'] for m in modules]
+    current_children = [c for c in model.named_children()]
+    children = []
+    iterations = len(current_children) + len(all_positions)
+    if -1 in all_positions: iterations -= 1
+    for i in range(iterations):
+        if i not in all_positions:
+            children.append(current_children[i])
+        else:
+            idx = all_positions.index(i)
+            d = modules[idx]
+            children.append((d['name'], d['module']))
+    if -1 in all_positions:
+        idx = all_positions.index(-1)
+        d = modules[idx]
+        children.append((d['name'], d['module']))
+        
+    model = torch.nn.Sequential(
+        OrderedDict(children)
+    ) 
 
-    
-    
-    
+    return model
