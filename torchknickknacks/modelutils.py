@@ -3,7 +3,7 @@
 
 def get_model_params(model, params_to_get = None):
     '''Extracts the parameters, names, and 'requires gradient' status from a 
-    model.
+    model
     
     Input
     -----
@@ -16,29 +16,29 @@ def get_model_params(model, params_to_get = None):
     
     Output
     ------     
-    params_name:, list, contaning one str for each extracted parameter
+    params_name: list, contaning one str for each extracted parameter
     
     params_values: list, containg one tensor corresponding to each 
         parameter. NOTE: The tensor is detached from the computation graph 
-    req_grad_orig: list, containing one Boolean variable for each parameter
-        denoting the requires_grad status of the original tensor/parameter 
+    req_grad: list, containing one Boolean variable for each parameter
+        denoting the requires_grad status of the tensor/parameter 
         of the model     
     '''    
     params_names = []
     params_values = [] 
-    req_grad_orig = []
+    req_grad = []
     for name, param in zip(model.named_parameters(), model.parameters()):             
         if params_to_get is not None:
             if name[0] in params_to_get: 
                 params_names.append(name[0])
                 params_values.append(param.detach().clone())
-                req_grad_orig.append(param.requires_grad)
+                req_grad.append(param.requires_grad)
         else:
             params_names.append(name[0])
             params_values.append(param.detach().clone())
-            req_grad_orig.append(param.requires_grad)
+            req_grad.append(param.requires_grad)
                        
-    return params_values, params_names, req_grad_orig
+    return params_values, params_names, req_grad
 
 def freeze_params(model, 
                   params_to_freeze = None,
@@ -69,3 +69,8 @@ def freeze_params(model,
             param.requires_grad = True if freeze is False else False  
     
     return model
+
+
+    
+    
+    
