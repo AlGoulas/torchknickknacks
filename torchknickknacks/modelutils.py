@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+from collections import OrderedDict
+
+import torch 
 
 def get_model_params(model, params_to_get = None):
     '''Extracts the parameters, names, and 'requires gradient' status from a 
@@ -68,6 +71,44 @@ def freeze_params(model,
         else:
             param.requires_grad = True if freeze is False else False  
     
+    return model
+
+def delete_layers(model, del_ids = []):
+    '''Delete layers from model
+    
+    Input
+    -----
+    model: instance of class of the base class torch.nn.Module
+    
+    del_ids: list, default [], of int or str specifying the modules/layers
+        that will be deleted
+        
+    Output
+    ------ 
+    model: model with deleted modules/layers that is an instance of  
+        torch.nn.modules.container.Sequential
+    '''
+    # Check del_ids int or str?
+    what_type = None
+    type_str = [isinstance(d, str) for d in del_ids]
+    if all(type_str): 
+        what_type = 'str' 
+    else:
+        type_int = [isinstance(d, int) for d in del_ids] 
+        if all(type_int):
+            what_type = 'int'
+    if what_type is None: 
+        print('\ndel_ids must be a list of int or a list of str')
+        return
+    if what_type == 'int':
+        children = [c for i,c in enumerate(model.named_children()) if i not in del_ids]
+    elif what_type == 'str':
+        children = [c for i,c in enumerate(model.named_children()) if c[0] not in del_ids]#check if name of module in the list
+        
+    model = torch.nn.Sequential(
+        OrderedDict(children)
+    ) 
+
     return model
 
 
