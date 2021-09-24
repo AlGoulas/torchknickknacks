@@ -112,14 +112,45 @@ def delete_layers(model, del_ids = []):
     return model
 
 def add_layers(model, modules = []):
+    '''Add layers/modules to torch.nn.modules.container.Sequential
+    
+    Input
+    -----
+    model: instance of class of base class torch.nn.Module
+    
+    modules: list of dict
+        each dict has key:value pairs
+        
+        {
+        'name': str
+        'position': int 
+        'module': torch.nn.Module
+        }
+        
+        with: 
+            name: str, name to be added in the nn.modules.container.Sequential 
+            
+            position: int, [0,..N], with N>0, also -1, where N the total
+            nr of modules in the torch.nn.modules.container.Sequential
+            -1 denotes the module that will be appended at the end
+            
+            module: torch.nn.Module
+    
+    Output
+    ------
+    model: model with added modules/layers that is an instance of  
+        torch.nn.modules.container.Sequential
+    '''
     all_positions = [m['position'] for m in modules]
     current_children = [c for c in model.named_children()]
     children = []
+    children_idx = 0
     iterations = len(current_children) + len(all_positions)
     if -1 in all_positions: iterations -= 1
     for i in range(iterations):
         if i not in all_positions:
-            children.append(current_children[i])
+            children.append(current_children[children_idx])
+            children_idx += 1
         else:
             idx = all_positions.index(i)
             d = modules[idx]
