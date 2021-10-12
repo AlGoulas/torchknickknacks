@@ -50,7 +50,7 @@ def freeze_params(model,
     
     Input
     -----
-    model:  class instance based on the base class torch.nn.Module
+    model:  class instance based on the base class torch.nn.Module 
     
     params_to_freeze: list of str specifying the names of the params to be 
         frozen or unfrozen
@@ -138,7 +138,7 @@ def add_layers(model, modules = []):
     
     Output
     ------
-    model: model with added modules/layers that is an instance of  
+    model: model with added modules/layers that is an instance of   
         torch.nn.modules.container.Sequential
     '''
     all_positions = [m['position'] for m in modules]
@@ -165,3 +165,60 @@ def add_layers(model, modules = []):
     ) 
 
     return model
+
+class Hook():
+    '''Register forward or backward hooks to a module
+    The hooks can records input, output or prameters of a module
+    
+    Input
+    -----
+    module: a module of a class in torch.nn.modules 
+    
+    record_input: bool, default False, deciding if input to module will be
+        recorded
+        
+    record_output: bool, default False, deciding if output to module will be
+        recorded 
+        
+    record_params: bool, default False, deciding if params of module will be
+        recorded 
+        
+    params_to_get: list of str, default None, specifying the parameters to be 
+        recorded from the module (if None all parameters are recorded)
+        NOTE: meaningful only if record_params
+        
+    backward: bool, default False, deciding if a forward or backward hook
+        will be registered
+    '''
+    def __init__(self, 
+                 module,
+                 record_input = False,
+                 record_output = False,
+                 record_params = False,
+                 params_to_get = None,
+                 backward = False):
+        self.params_to_get = params_to_get
+        if record_input is True:
+            fn = self._fn_in 
+        elif record_output is True:
+            fn = self._fn_out   
+        elif record_params is True:
+            fn = self._fn_params 
+            
+        if backward is False:
+            self.hook = module.register_forward_hook(fn)
+        elif backward is True:
+            self.hook = module.register_full_backward_hook(fn)
+    
+    def _fn_in(self, module, input, output):
+        self.recording = input
+        
+    def _fn_out(self, module, input, output):
+        self.recording = output
+        
+    def _fn_params(self, module, input, output):
+        params = get_model_params(module, params_to_get = self.params_to_get)[0]
+        self.recording = params     
+            
+    def close(self):
+        self.hook.remove()
