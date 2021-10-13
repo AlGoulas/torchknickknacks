@@ -196,7 +196,8 @@ class Hook():
                  record_output = False,
                  record_params = False,
                  params_to_get = None,
-                 backward = False):
+                 backward = False,
+                 custom_fn = None):
         self.params_to_get = params_to_get
         if record_input is True:
             fn = self._fn_in 
@@ -204,6 +205,10 @@ class Hook():
             fn = self._fn_out   
         elif record_params is True:
             fn = self._fn_params 
+            
+        if custom_fn is not None: 
+            fn = self._custom_wrapper
+            self.custom_fn = custom_fn
             
         if backward is False:
             self.hook = module.register_forward_hook(fn)
@@ -218,7 +223,11 @@ class Hook():
         
     def _fn_params(self, module, input, output):
         params = get_model_params(module, params_to_get = self.params_to_get)[0]
-        self.recording = params     
-            
+        self.recording = params
+        
+    def _custom_wrapper(self, module, input, output):
+        res = self.custom_fn(module, input, output)
+        self.recording = res
+        
     def close(self):
         self.hook.remove()
