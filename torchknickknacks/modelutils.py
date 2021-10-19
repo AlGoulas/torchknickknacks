@@ -168,7 +168,7 @@ def add_layers(model, modules = []):
 
 class Hook():
     '''Register forward or backward hooks to a module
-    The hooks can records input, output or prameters of a module
+    The hooks records input, output or prameters of a module
     
     Input
     -----
@@ -189,6 +189,9 @@ class Hook():
         
     backward: bool, default False, deciding if a forward or backward hook
         will be registered
+        
+    custom_fn: function, default None, to be executed in the pass
+            
     '''
     def __init__(self, 
                  module,
@@ -197,8 +200,10 @@ class Hook():
                  record_params = False,
                  params_to_get = None,
                  backward = False,
-                 custom_fn = None):
+                 custom_fn = None,
+                 **kwargs):
         self.params_to_get = params_to_get
+        self.kwargs = kwargs if kwargs else None
         if record_input is True:
             fn = self._fn_in 
         elif record_output is True:
@@ -226,7 +231,10 @@ class Hook():
         self.recording = params
         
     def _custom_wrapper(self, module, input, output):
-        res = self.custom_fn(module, input, output)
+        if self.kwargs: 
+            res = self.custom_fn(module, input, output, **self.kwargs)
+        else:
+            res = self.custom_fn(module, input, output)
         self.recording = res
         
     def close(self):
