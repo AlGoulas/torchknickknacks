@@ -25,7 +25,7 @@ def get_model_params(model, params_to_get = None):
         parameter. NOTE: The tensor is detached from the computation graph 
     req_grad: list, containing one Boolean variable for each parameter
         denoting the requires_grad status of the tensor/parameter 
-        of the model     
+        of the model      
     '''    
     params_names = []
     params_values = [] 
@@ -71,8 +71,6 @@ def freeze_params(model,
         else:
             param.requires_grad = True if freeze is False else False  
     
-    return model
-
 def delete_layers(model, del_ids = []):
     '''Delete layers from model
     

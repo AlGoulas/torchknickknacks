@@ -1,6 +1,6 @@
 # torchknickknacks
 
-a collection of PyTorch utilities to accomplish tasks relevant for many projects without the need to recode the same few lines of code again and again
+a collection of PyTorch utilities to accomplish tasks relevant for many projects without the need to re-write the same few lines of code again and again
 
 # Motivation
 
