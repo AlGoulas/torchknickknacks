@@ -40,8 +40,8 @@ Run the corresponding example before using each feature to ensure everything is 
 
 Functions in this package are motivated by and based on questions and tips in the PyTorch forum
 
-All functions related to model parameters are based on questions and tips [in this thread] (https://discuss.pytorch.org/t/access-all-weights-of-a-model/77672)
+All functions related to model parameters are based on questions and tips [in this thread](https://discuss.pytorch.org/t/access-all-weights-of-a-model/77672)
 
-Recorder class based on [this tutorial] (https://www.kaggle.com/sironghuang/understanding-pytorch-hooks/notebook) on hooks in PyTorch
+Recorder class based on [this tutorial](https://www.kaggle.com/sironghuang/understanding-pytorch-hooks/notebook) on hooks in PyTorch
  
 
