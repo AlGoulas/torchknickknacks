@@ -166,9 +166,9 @@ def add_layers(model, modules = []):
 
     return model
 
-class Hook():
-    '''Register forward or backward hooks to a module
-    The hooks records input, output or prameters of a module
+class Recorder():
+    '''Get input, output or parameters to a module/layer 
+    by registering forward or backward hooks
     
     Input
     -----
@@ -188,10 +188,27 @@ class Hook():
         NOTE: meaningful only if record_params
         
     backward: bool, default False, deciding if a forward or backward hook
-        will be registered
+        will be registered and the recprding will be performed accordingly
         
-    custom_fn: function, default None, to be executed in the pass
-            
+    custom_fn: function, default None, to be executed in the forward or backward
+        pass.
+        
+        It must have the following signature:
+        
+        custom_fn(module, output, input, **kwars)
+        
+        with kwars optional
+        
+        The signature follows the signature of functions to be registered
+        in hooks. See for more details:
+        https://pytorch.org/docs/stable/generated/torch.nn.modules.module.register_module_forward_hook.html
+    
+     **kwargs: if keyword args are specified they will be passed as to the 
+         custom_fn     
+         
+         
+    The attribute recording contains the output, input or params of a module
+         
     '''
     def __init__(self, 
                  module,
