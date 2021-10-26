@@ -76,37 +76,22 @@ def delete_layers(model, del_ids = []):
     
     Input
     -----
-    model: instance of class of base class torch.nn.Module
+    model: model to be modified
     
-    del_ids: list, default [], of int or str specifying the modules/layers
+    del_ids: list, default [], of int the modules/layers
         that will be deleted
+        NOTE: 0, 1... denotes the 1st, 2nd etc layer
         
     Output
     ------ 
     model: model with deleted modules/layers that is an instance of  
         torch.nn.modules.container.Sequential
     '''
-    # Check del_ids int or str?
-    what_type = None
-    type_str = [isinstance(d, str) for d in del_ids]
-    if all(type_str): 
-        what_type = 'str' 
-    else:
-        type_int = [isinstance(d, int) for d in del_ids] 
-        if all(type_int):
-            what_type = 'int'
-    if what_type is None: 
-        print('\ndel_ids must be a list of int or a list of str')
-        return
-    if what_type == 'int':
-        children = [c for i,c in enumerate(model.named_children()) if i not in del_ids]
-    elif what_type == 'str':
-        children = [c for i,c in enumerate(model.named_children()) if c[0] not in del_ids]#check if name of module in the list
-        
+    children = [c for i,c in enumerate(model.named_children()) if i not in del_ids]  
     model = torch.nn.Sequential(
         OrderedDict(children)
     ) 
-
+    
     return model
 
 def add_layers(model, modules = []):
