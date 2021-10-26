@@ -10,7 +10,6 @@ model = torch.hub.load('pytorch/vision:v0.10.0', 'alexnet', pretrained = True)
 # Delete the last layer of the classifier of the AlexNet model 
 model.classifier = modelutils.delete_layers(model.classifier, del_ids = [6])
 
-
 # Delete the last linear layer of an Elman RNN
 simple_rnn = nn.Sequential(
     nn.RNN(2, 

@@ -191,7 +191,6 @@ class Recorder():
          
          
     The attribute recording contains the output, input or params of a module
-         
     '''
     def __init__(self, 
                  module,

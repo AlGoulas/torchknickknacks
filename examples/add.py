@@ -18,4 +18,3 @@ module = {
          }
 
 model.classifier = modelutils.add_layers(model.classifier, modules = [module]) 
-
