@@ -47,3 +47,22 @@ data = torch.rand(64, 3, 224, 224)
 output = model(data)
 print(recorder.recording)#list of tensors of shape (192, 64, 5, 5) (weights) (192,) (biases) 
 recorder.close()#remove the recorder
+
+# A custom function can also be passed to the recorder and perform arbitrary 
+# operations. In the example below, the custom function prints the kwargs that 
+# are passed along with the custon function and also return 1 (stored in the recorder)
+def custom_fn(*args, **kwargs):
+    print('custom called')
+    for k,v in kwargs.items():
+        print('\nkey argument:', k)
+        print('\nvalue argument:', v)
+    return 1
+
+recorder = modelutils.Recorder(layer, 
+                               backward = False, 
+                               custom_fn = custom_fn, 
+                               print_value = 5)
+data = torch.rand(64, 3, 224, 224)
+output = model(data)
+print(recorder.recording)#list of tensors of shape (192, 64, 5, 5) (weights) (192,) (biases) 
+recorder.close()#remove the recorder
