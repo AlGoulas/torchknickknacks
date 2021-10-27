@@ -27,14 +27,11 @@ Clone the repository, create a virtual environment (e.g., with conda) and instal
 * ```pearson_coeff``` computes pearson correlation coefficient between two 1D tensors   
 * ```pearson_coeff_pairs``` computes pearson correlation coefficient across the 1st dimension of a 2D tensor 
 * ```accuracy``` compute the accuracy for classification tasks
+* ```class weights``` calculate class weights for classficiation with imbalanced classes 
 
 # Examples
 
 An example for each feature is given in ```examples```
-
-# Tests
-
-Run the corresponding example before using each feature to ensure everything is smooth and nice 
 
 # Acknowledgements
 
