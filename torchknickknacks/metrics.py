@@ -54,7 +54,7 @@ def calc_accuracy(output = None, labels = None):
     
     Input
     -----
-    output: torch.Tensor tensor of size (N,M) where N are the observations and 
+    output: torch.Tensor of size (N,M) where N are the observations and 
         M the classes. Values must be such that highest values denote the 
         most probable class prediction.
     
@@ -73,3 +73,28 @@ def calc_accuracy(output = None, labels = None):
 
     return acc 
 
+def class_weights(labels):
+    '''Compute class weights for imbalanced classes
+    
+    Input
+    -----
+    labels: torch.Tensor of shape (N,) of int ranging from 0,1,..C-1 where
+        C is the number of classes
+    
+    Output
+    ------
+    weights: torch.Tensor of shape (C,) where C is the number of classes 
+        with the weights of each class based on the occurence of each class
+        NOTE: computed as weights_c = min(occurence) / occurence_c
+        for class c
+    
+    labels_weights: dict, with keys the unique int for each class and values
+        the weight assigned to each class based on the occurence of each class    
+    '''
+    labels_unique = torch.unique(labels)
+    occurence = [len(torch.where(lu == labels)[0]) for lu in labels_unique]
+    weights = [min(occurence) / o for o in occurence]
+    labels_weights = {lu.item():w for lu,w in zip(labels_unique, weights)}
+    weights = torch.Tensor(weights)
+       
+    return weights, labels_weights
