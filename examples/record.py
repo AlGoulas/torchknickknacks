@@ -51,7 +51,7 @@ recorder.close()#remove the recorder
 # A custom function can also be passed to the recorder and perform arbitrary 
 # operations. In the example below, the custom function prints the kwargs that 
 # are passed along with the custon function and also return 1 (stored in the recorder)
-def custom_fn(*args, **kwargs):
+def custom_fn(*args, **kwargs):#signature of any custom fn
     print('custom called')
     for k,v in kwargs.items():
         print('\nkey argument:', k)

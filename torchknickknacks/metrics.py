@@ -41,7 +41,7 @@ def pearson_coeff_pairs(x):
        pearson correllation coefficient of the pair of tensors with idx in 
        tuple r[n][1] 
     '''
-    all_un_pair_comb = [comb for comb in combinations(list(range(len(x.shape[0]))), 2)]
+    all_un_pair_comb = [comb for comb in combinations(list(range(x.shape[0])), 2)]
     r = []
     for aupc in all_un_pair_comb:
         current_r = pearson_coeff(x[aupc[0], :], x[aupc[1], :])    
