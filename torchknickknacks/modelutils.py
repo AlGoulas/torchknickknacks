@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 from collections import OrderedDict
+from pathlib import Path
+import pickle 
 
 import torch 
 
@@ -186,6 +188,10 @@ class Recorder():
         in hooks. See for more details:
         https://pytorch.org/docs/stable/generated/torch.nn.modules.module.register_module_forward_hook.html
     
+     save_to: str, default None, specifying a path to a folder for all recordings
+         to be saved.
+         NOTE: recodrings are saved with filename: recording_0, recording_1, recording_N
+         
      **kwargs: if keyword args are specified they will be passed as to the 
          custom_fn     
          
@@ -200,9 +206,13 @@ class Recorder():
                  params_to_get = None,
                  backward = False,
                  custom_fn = None,
+                 save_to = None,
                  **kwargs):
         self.params_to_get = params_to_get
         self.kwargs = kwargs if kwargs else None
+        if save_to: 
+            self.counter = 0#if path is specified, keep a counter
+            self.save_to = save_to 
         if record_input is True:
             fn = self._fn_in 
         elif record_output is True:
@@ -220,21 +230,55 @@ class Recorder():
             self.hook = module.register_full_backward_hook(fn)
     
     def _fn_in(self, module, input, output):
-        self.recording = input
-        
-    def _fn_out(self, module, input, output):
-        self.recording = output
+        att = getattr(self, 'save_to', None)
+        if att is None:
+            self.recording = input
+        else:
+            name = 'recording_' + str(self.counter) 
+            filename = Path(self.save_to) / name
+            self.counter += 1
+            with open(filename, 'wb') as handle:
+                pickle.dump(input, handle, protocol = pickle.HIGHEST_PROTOCOL)
+                
+    def _fn_out(self, module, input, output): 
+        att = getattr(self, 'save_to', None)
+        if att is None:
+            self.recording = output
+        else:
+            name = 'recording_' + str(self.counter) 
+            filename = Path(self.save_to) / name
+            self.counter += 1
+            with open(filename, 'wb') as handle:
+                pickle.dump(output, handle, protocol = pickle.HIGHEST_PROTOCOL)
         
     def _fn_params(self, module, input, output):
         params = get_model_params(module, params_to_get = self.params_to_get)[0]
-        self.recording = params
+        att = getattr(self, 'save_to', None)
+        if att is None:
+            self.recording = params
+        else:
+            name = 'recording_' + str(self.counter) 
+            filename = Path(self.save_to) / name
+            self.counter += 1
+            with open(filename, 'wb') as handle:
+                pickle.dump(params, handle, protocol = pickle.HIGHEST_PROTOCOL)
         
     def _custom_wrapper(self, module, input, output):
         if self.kwargs: 
             res = self.custom_fn(module, input, output, **self.kwargs)
         else:
             res = self.custom_fn(module, input, output)
-        self.recording = res
-        
+        att = getattr(self, 'save_to', None)
+        if res and att is None:    
+            self.recording = res
+        elif res and att:
+            name = 'recording_' + str(self.counter) 
+            filename = Path(self.save_to) / name
+            self.counter += 1
+            with open(filename, 'wb') as handle:
+                pickle.dump(res, handle, protocol = pickle.HIGHEST_PROTOCOL)
+            
     def close(self):
         self.hook.remove()
+        att = getattr(self, 'counter', None)
+        if att: self.counter = 0

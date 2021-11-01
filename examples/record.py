@@ -59,10 +59,23 @@ def custom_fn(*args, **kwargs):#signature of any custom fn
     return 1
 
 recorder = modelutils.Recorder(layer, 
-                               backward = False, 
-                               custom_fn = custom_fn, 
-                               print_value = 5)
+                                backward = False, 
+                                custom_fn = custom_fn, 
+                                print_value = 5)
 data = torch.rand(64, 3, 224, 224)
 output = model(data)
 print(recorder.recording)#list of tensors of shape (192, 64, 5, 5) (weights) (192,) (biases) 
+recorder.close()#remove the recorder
+
+# Record output to the layer during the forward pass and store it in folder 
+layer = list(model.features.named_children())[3][1]
+recorder = modelutils.Recorder(
+    layer, 
+    record_params = True, 
+    backward = False, 
+    save_to = '/Users/alexandrosgoulas/Data/work-stuff/python-code/projects/test_recorder'
+)
+for _ in range(5):#5 passes e.g. batches, thus 5 stored "recorded" tensors
+    data = torch.rand(64, 3, 224, 224)
+    output = model(data)
 recorder.close()#remove the recorder
