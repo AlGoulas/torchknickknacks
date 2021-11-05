@@ -6,6 +6,7 @@ from setuptools import find_packages
 setup(name='torchknickknacks',
       version='1.0',
       description='useful little things needed for pytorch',
+      url='https://github.com/AlGoulas/torchknickknacks',
       author='Alexandros Goulas',
       author_email='agoulas227@gmail.com',
       classifiers=[
