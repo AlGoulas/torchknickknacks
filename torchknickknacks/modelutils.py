@@ -6,7 +6,7 @@ import pickle
 
 import torch 
 
-def get_model_params(model, params_to_get = None):
+def get_model_params(model, params_to_get = None, detach = True):
     '''Extracts the parameters, names, and 'requires gradient' status from a 
     model
     
@@ -15,16 +15,20 @@ def get_model_params(model, params_to_get = None):
     model: class instance based on the base class torch.nn.Module
     
     params_to_get: list of str, default=None, specifying the names of the 
-        parameters to be extracted.
+        parameters to be extracted
         If None, then all parameters and names of parameters from the model 
         will be extracted
+        
+    detach: bool, default True, detach the tensor from the computational graph    
     
     Output
     ------     
     params_name: list, contaning one str for each extracted parameter
     
     params_values: list, containg one tensor corresponding to each 
-        parameter. NOTE: The tensor is detached from the computation graph 
+        parameter. 
+        NOTE: The tensor is detached from the computation graph 
+        
     req_grad: list, containing one Boolean variable for each parameter
         denoting the requires_grad status of the tensor/parameter 
         of the model      
@@ -36,11 +40,17 @@ def get_model_params(model, params_to_get = None):
         if params_to_get is not None:
             if name[0] in params_to_get: 
                 params_names.append(name[0])
-                params_values.append(param.detach().clone())
+                if detach is True:
+                    params_values.append(param.detach().clone())
+                elif detach is False:
+                    params_values.append(param.clone())
                 req_grad.append(param.requires_grad)
         else:
             params_names.append(name[0])
-            params_values.append(param.detach().clone())
+            if detach is True:
+                params_values.append(param.detach().clone())
+            elif detach is False:
+                params_values.append(param.clone())
             req_grad.append(param.requires_grad)
                        
     return params_values, params_names, req_grad
@@ -228,7 +238,8 @@ class Recorder():
             self.hook = module.register_forward_hook(fn)
         elif backward is True:
             self.hook = module.register_full_backward_hook(fn)
-    
+    #TODO: merge _fn_in _fn_out and _fn_params in 1 fun since they are 
+    #identical save 1 line
     def _fn_in(self, module, input, output):
         att = getattr(self, 'save_to', None)
         if att is None:
