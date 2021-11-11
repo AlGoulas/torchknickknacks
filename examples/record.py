@@ -73,7 +73,7 @@ recorder = modelutils.Recorder(
     layer, 
     record_params = True, 
     backward = False, 
-    save_to = '/Users/alexandrosgoulas/Data/work-stuff/python-code/projects/test_recorder'
+    save_to = '/Users/alexandrosgoulas/Data/work-stuff/python-code/projects/test_recorder'#create the folder!
 )
 for _ in range(5):#5 passes e.g. batches, thus 5 stored "recorded" tensors
     data = torch.rand(64, 3, 224, 224)
