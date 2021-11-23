@@ -1,4 +1,6 @@
-![knickknacks](knickknacks.png)
+<p align="center">
+<img src="knickknacks.png" alt="drawing" width="200"/>
+</p>
 
 # torchknickknacks
 
