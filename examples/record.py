@@ -8,7 +8,7 @@ model = torch.hub.load('pytorch/vision:v0.10.0', 'alexnet', pretrained = True)
 
 # Register a recorder to the 4th layer of the features part of AlexNet
 # Conv2d(64, 192, kernel_size=(5, 5), stride=(1, 1), padding=(2, 2))
-# and record the output of the layer durign the forward pass
+# and record the output of the layer during the forward pass
 layer = list(model.features.named_children())[3][1]
 recorder = modelutils.Recorder(layer, record_output = True, backward = False)
 data = torch.rand(64, 3, 224, 224)
@@ -73,7 +73,7 @@ recorder = modelutils.Recorder(
     layer, 
     record_params = True, 
     backward = False, 
-    save_to = '/Users/alexandrosgoulas/Data/work-stuff/python-code/projects/test_recorder'#create the folder!
+    save_to = '/Users/alexandrosgoulas/Data/work-stuff/python-code/projects/test_recorder'#create the folder before running this example!
 )
 for _ in range(5):#5 passes e.g. batches, thus 5 stored "recorded" tensors
     data = torch.rand(64, 3, 224, 224)
