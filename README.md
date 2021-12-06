@@ -1,3 +1,7 @@
+<p align="center">
+<img src="knickknacks.png" alt="drawing" width="200"/>
+</p>
+
 # torchknickknacks
 
 a collection of PyTorch utilities to accomplish tasks relevant for many projects without the need to re-write the same few lines of code again and again
