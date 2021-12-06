@@ -98,3 +98,26 @@ def class_weights(labels):
     weights = torch.Tensor(weights)
        
     return weights, labels_weights
+
+def effective_dim(X, center = True):
+    '''Compute the effective dimension based on the eigenvalues of X
+    
+    Input
+    -----
+    X: tensor of shape (N,M) where N the samples and M the features
+    
+    center: bool, default True, indicating if X should be centered or not
+    
+    Output
+    ------
+    ed: effective dimension of X
+    '''
+    pca = torch.pca_lowrank(X, 
+                            q = min(X.shape), 
+                            center = center)
+    eigenvalues = pca[1]
+    eigenvalues = torch.pow(eigenvalues, 2) / (X.shape[0] - 1)
+    li = eigenvalues /torch.sum(eigenvalues)
+    ed = 1 / torch.sum(torch.pow(li, 2))
+    
+    return ed
