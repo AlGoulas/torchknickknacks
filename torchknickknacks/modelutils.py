@@ -282,3 +282,32 @@ class Recorder():
         self.hook.remove()
         att = getattr(self, 'counter', None)
         if att: self.counter = 0
+        
+def get_all_layers(model):
+    '''
+    Get all the children (layers) from a model, even the ones that are nested
+    
+    Input
+    -----
+    model: class instance based on the base class torch.nn.Module
+        
+    Output
+    ------
+    all_layers: list of all layers of the model
+    
+    Adapted from:
+    https://stackoverflow.com/questions/54846905/pytorch-get-all-layers-of-model
+    '''
+    children = list(model.children())
+    all_layers = []
+    if not children:#if model has no children model is last child
+        return model
+    else:
+       # Look for children from children to the last child
+       for child in children:
+            try:
+                all_layers.extend(get_all_layers(child))
+            except TypeError:
+                all_layers.append(get_all_layers(child))
+            
+    return all_layers
